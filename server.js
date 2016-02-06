@@ -12,6 +12,7 @@ var passport = require('passport');
 
 var secret = require('./config/secret');
 var User = require('./models/user');
+var Category = require('./models/category');
 
 var app = express();
 
@@ -42,14 +43,23 @@ app.use(function(req, res, next) {
   res.locals.user = req.user;
   next();
 });
+app.use(function(req, res, next) {
+  Category.find({}, function(err, categories) {
+    if (err) return next(err);
+    res.locals.categories = categories;
+  });
+});
+
 app.engine('ejs', engine);
 app.set('view engine', 'ejs');
 
 var mainRoutes = require('./routes/main');
 var userRoutes = require('./routes/user');
+var adminRoutes = require('./routes/admin');
 
 app.use(mainRoutes);
 app.use(userRoutes);
+app.use(adminRoutes);
 
 app.listen(secret.port, function(err){
   if (err) throw err;
