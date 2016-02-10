@@ -43,10 +43,12 @@ app.use(function(req, res, next) {
   res.locals.user = req.user;
   next();
 });
+
 app.use(function(req, res, next) {
   Category.find({}, function(err, categories) {
     if (err) return next(err);
     res.locals.categories = categories;
+    next();
   });
 });
 
@@ -56,10 +58,12 @@ app.set('view engine', 'ejs');
 var mainRoutes = require('./routes/main');
 var userRoutes = require('./routes/user');
 var adminRoutes = require('./routes/admin');
+var apiRoutes = require('./api/api');
 
 app.use(mainRoutes);
 app.use(userRoutes);
 app.use(adminRoutes);
+app.use('/api', apiRoutes);
 
 app.listen(secret.port, function(err){
   if (err) throw err;
